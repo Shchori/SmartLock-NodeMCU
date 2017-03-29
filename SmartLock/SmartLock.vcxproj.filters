@@ -17,5 +17,20 @@
   <ItemGroup>
     <None Include="SmartLock.ino" />
   </ItemGroup>
- 
+  <ItemGroup>
+    <ClCompile Include="FingerPrint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FingerPrintProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Led.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeMcuConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

@@ -1,6 +1,8 @@
 #pragma once
 #include <Adafruit_Fingerprint.h>
 #include "NodeMcuConstants.h"
+
+//this class is a proxy to use ADA fingerPrint sensor
 class FingerPrintProxy
 {
 private:
