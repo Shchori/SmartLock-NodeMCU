@@ -1,4 +1,6 @@
 #pragma once
+#include <Arduino.h>
+
 //nodeMcu constants
 enum PinConection
 {

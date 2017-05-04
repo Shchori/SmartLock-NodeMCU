@@ -9,9 +9,10 @@ SoftwareSerial* FingerPrintProxy::serialConnection = NULL;
 void FingerPrintProxy::init(PinConection pinIn, PinConection pinOut)
 {
 	serialConnection = new SoftwareSerial(pinIn, pinOut);
+	Logger::info("config fingerprint sensor");
+	Logger::debug("input pin : "); Serial.print(pinIn);
+	Logger::debug("output pin : "); Serial.print(pinOut);
 	if (!instance) {
-		Serial.begin(9600);
-		Serial.println("fingertest");
 		// set the data rate for the sensor serial port
 		getInstance();
 	}
@@ -26,12 +27,13 @@ FingerPrintProxy* FingerPrintProxy::getInstance()
 		instance = new FingerPrintProxy(serialConnection);
 		instance->fingerPrint.begin(57600);
 	}
+	Logger::info("check fingerprint sensor");
 	if (serialConnection && instance->fingerPrint.verifyPassword()) {
-		Serial.begin(9600);
-		Serial.println("Found fingerprint sensor! ");
+		Serial.begin(115200);
+		Logger::info("Found fingerprint sensor! ");
 	}
 	else {
-		Serial.println("Did not find fingerprint sensor :(");
+		Logger::info("Did not find fingerprint sensor :(");
 		FingerPrintProxy * temp;
 		delete temp;
 		instance = NULL;
@@ -40,56 +42,62 @@ FingerPrintProxy* FingerPrintProxy::getInstance()
 }
 
 
-uint8_t FingerPrintProxy::EnrollFingerprint(uint8_t id) {
+int FingerPrintProxy::EnrollFingerprint(uint8_t id) {
 	uint8_t p = -1;
-	Serial.begin(9600);
-	Serial.println("Waiting for valid finger to enroll");
-	while (p != FINGERPRINT_OK) {
+	Serial.begin(115200);
+	Logger::info("Start enroll fingerprint id:"); Serial.print(id);
+	Logger::info("Waiting for valid finger to enroll");
+	int startTime = millis();
+	while (p != FINGERPRINT_OK && (FINGERPRINT_TIMEOUT + startTime) > millis()) {
 		p = fingerPrint.getImage();
 		switch (p) {
 		case FINGERPRINT_OK:
-			Serial.println("Image taken");
+			Logger::info("Image taken");
 			break;
 		case FINGERPRINT_NOFINGER:
 			Serial.print(".");
 			break;
 		case FINGERPRINT_PACKETRECIEVEERR:
-			Serial.println("Communication error");
+			Logger::info("Communication error");
 			break;
 		case FINGERPRINT_IMAGEFAIL:
-			Serial.println("Imaging error");
+			Logger::info("Imaging error");
 			break;
 		default:
-			Serial.println("Unknown error");
+			Logger::info("Unknown error");
 			break;
 		}
 	}
-
+	if (p != FINGERPRINT_OK) {
+		return -1;
+	}
 	// OK success!
 
 	p = fingerPrint.image2Tz(1);
 	switch (p) {
 	case FINGERPRINT_OK:
-		Serial.println("Image converted");
+		Logger::info("Image converted");
 		break;
 	case FINGERPRINT_IMAGEMESS:
-		Serial.println("Image too messy");
+		Logger::info("Image too messy");
 		return p;
 	case FINGERPRINT_PACKETRECIEVEERR:
-		Serial.println("Communication error");
+		Logger::info("Communication error");
 		return p;
 	case FINGERPRINT_FEATUREFAIL:
-		Serial.println("Could not find fingerprint features");
+		Logger::info("Could not find fingerprint features");
 		return p;
 	case FINGERPRINT_INVALIDIMAGE:
-		Serial.println("Could not find fingerprint features");
+		Logger::info("Could not find fingerprint features");
 		return p;
 	default:
-		Serial.println("Unknown error");
+		Logger::info("Unknown error");
 		return p;
 	}
-
-	Serial.println("Remove finger");
+	if (p != FINGERPRINT_OK) {
+		return -1;
+	}
+	Logger::info("Remove finger");
 	delay(2000);
 	p = 0;
 	while (p != FINGERPRINT_NOFINGER) {
@@ -97,26 +105,30 @@ uint8_t FingerPrintProxy::EnrollFingerprint(uint8_t id) {
 	}
 
 	p = -1;
-	Serial.println("Place same finger again");
-	while (p != FINGERPRINT_OK) {
+	Logger::info("Place same finger again");
+	startTime = millis();
+	while (p != FINGERPRINT_OK && (FINGERPRINT_TIMEOUT + startTime) > millis()) {
 		p = fingerPrint.getImage();
 		switch (p) {
 		case FINGERPRINT_OK:
-			Serial.println("Image taken");
+			Logger::info("Image taken");
 			break;
 		case FINGERPRINT_NOFINGER:
 			Serial.print(".");
 			break;
 		case FINGERPRINT_PACKETRECIEVEERR:
-			Serial.println("Communication error");
+			Logger::info("Communication error");
 			break;
 		case FINGERPRINT_IMAGEFAIL:
-			Serial.println("Imaging error");
+			Logger::info("Imaging error");
 			break;
 		default:
-			Serial.println("Unknown error");
+			Logger::info("Unknown error");
 			break;
 		}
+	}
+	if (p != FINGERPRINT_OK) {
+		return -1;
 	}
 
 	// OK success!
@@ -124,22 +136,22 @@ uint8_t FingerPrintProxy::EnrollFingerprint(uint8_t id) {
 	p = fingerPrint.image2Tz(2);
 	switch (p) {
 	case FINGERPRINT_OK:
-		Serial.println("Image converted");
+		Logger::info("Image converted");
 		break;
 	case FINGERPRINT_IMAGEMESS:
-		Serial.println("Image too messy");
+		Logger::info("Image too messy");
 		return p;
 	case FINGERPRINT_PACKETRECIEVEERR:
-		Serial.println("Communication error");
+		Logger::info("Communication error");
 		return p;
 	case FINGERPRINT_FEATUREFAIL:
-		Serial.println("Could not find fingerprint features");
+		Logger::info("Could not find fingerprint features");
 		return p;
 	case FINGERPRINT_INVALIDIMAGE:
-		Serial.println("Could not find fingerprint features");
+		Logger::info("Could not find fingerprint features");
 		return p;
 	default:
-		Serial.println("Unknown error");
+		Logger::info("Unknown error");
 		return p;
 	}
 
@@ -147,86 +159,97 @@ uint8_t FingerPrintProxy::EnrollFingerprint(uint8_t id) {
 	// OK converted!
 	p = fingerPrint.createModel();
 	if (p == FINGERPRINT_OK) {
-		Serial.println("Prints matched!");
+		Logger::info("Prints matched!");
 	}
 	else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-		Serial.println("Communication error");
+		Logger::info("Communication error");
 		return p;
 	}
 	else if (p == FINGERPRINT_ENROLLMISMATCH) {
-		Serial.println("Fingerprints did not match");
+		Logger::info("Fingerprints did not match");
 		return p;
 	}
 	else {
-		Serial.println("Unknown error");
+		Logger::info("Unknown error");
 		return p;
 	}
 
 	p = fingerPrint.storeModel(id);
 	if (p == FINGERPRINT_OK) {
-		Serial.println("Stored!");
+		Logger::info("Stored!");
 		return p;
 	}
 	else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-		Serial.println("Communication error");
+		Logger::info("Communication error");
 		return p;
 	}
 	else if (p == FINGERPRINT_BADLOCATION) {
-		Serial.println("Could not store in that location");
+		Logger::info("Could not store in that location");
 		return p;
 	}
 	else if (p == FINGERPRINT_FLASHERR) {
-		Serial.println("Error writing to flash");
+		Logger::info("Error writing to flash");
 		return p;
 	}
 	else {
-		Serial.println("Unknown error");
+		Logger::info("Unknown error");
 		return p;
 	}
 }
 
 
-uint8_t FingerPrintProxy::deleteFingerprint(uint8_t id) {
+int FingerPrintProxy::deleteFingerprint(uint8_t id) {
 	uint8_t p = -1;
-	Serial.begin(9600);
+	Serial.begin(115200);
+	Logger::info("Start delete fingerprint id : ");Serial.print(id);
 	p = fingerPrint.deleteModel(id);
 
 	if (p == FINGERPRINT_OK) {
-		Serial.println("Deleted!");
+		Logger::info("Deleted!");
 		return p;
 	}
 	else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-		Serial.println("Communication error");
+		Logger::info("Communication error");
 		return p;
 	}
 	else if (p == FINGERPRINT_BADLOCATION) {
-		Serial.println("Could not delete in that location");
+		Logger::info("Could not delete in that location");
 		return p;
 	}
 	else if (p == FINGERPRINT_FLASHERR) {
-		Serial.println("Error writing to flash");
+		Logger::info("Error writing to flash");
 		return p;
 	}
 	else {
-		Serial.print("Unknown error: 0x"); Serial.println(p, HEX);
+		Logger::info("Unknown error: 0x"); Logger::info("%04x", p);
 		return p;
 	}
 }
 
 
-int FingerPrintProxy::getFingerprintIDez(int& confidence) {
+int FingerPrintProxy::getFingerprintID() {
 	uint8_t p = fingerPrint.getImage();
+	int startTime = millis();
+	Logger::info("wait for fingerprint....");
+	while (p!=FINGERPRINT_OK && (FINGERPRINT_TIMEOUT+startTime) > millis() )
+	{
+		p = fingerPrint.getImage();
+	}
 	if (p != FINGERPRINT_OK)  return -1;
 
 	p = fingerPrint.image2Tz();
 	if (p != FINGERPRINT_OK)  return -1;
 
 	p = fingerPrint.fingerFastSearch();
-	if (p != FINGERPRINT_OK)  return -2;
-
+	if (p != FINGERPRINT_OK) {
+		Logger::info("not Found fingerprint");
+		return -1;
+	}
 	// found a match!
-	Serial.print("Found ID #"); Serial.print(fingerPrint.fingerID);
-	Serial.print(" with confidence of "); Serial.println(fingerPrint.confidence);
-	confidence = fingerPrint.confidence;
-	return fingerPrint.fingerID;
+	Logger::debug("Found ID # :");Serial.print( fingerPrint.fingerID);
+	Logger::debug(" with confidence of : ");Serial.print(fingerPrint.confidence);
+	if (fingerPrint.confidence > 80) {
+		return fingerPrint.fingerID;
+	}
+	return - 1;
 }
