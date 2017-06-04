@@ -3,8 +3,8 @@
 Led::Led(PinConection conn) :connPin(conn), status(OFF) {
 	Logger::info("Create led");
 	Logger::debug("Led pin "); Serial.print(conn);
-	pinMode(conn, OUT);
 	digitalWrite(conn, OFF);
+	pinMode(conn, OUT);
 }
 
 const PinStatus Led::getStatus() { return status; }
@@ -31,16 +31,16 @@ const void Led::flashTimes(int times, int delayMillis) {
 	Logger::info("flash led times:"); Serial.print(times);
 	Logger::debug("Led pin :"); Serial.print(connPin);
 	Logger::debug("delay :"); Serial.print(delayMillis);
-	this->turnOFF();
+	digitalWrite(connPin, OFF);
 	for (int i = 0; i < times; ++i) {
-		this->turnON();
+		digitalWrite(connPin, ON);
 		delay(delayMillis);
-		this->turnOFF();
+		digitalWrite(connPin, OFF);
 	}
 	if (tempStatus) {
-		this->turnON();
+		digitalWrite(connPin, ON);
 	}
 	else {
-		this->turnON();
+		digitalWrite(connPin, OFF);
 	}
 }

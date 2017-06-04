@@ -1,6 +1,6 @@
-#include "LockButton.h"
+#include "OutDoorButton.h"
 
-void LockButton::onLongPress() {
+void OutDoorButton::onLongPress() {
 	if (lock->isLock()) {
 		int id = fingerprint->getFingerprintID();
 		if (id > -1) {
@@ -13,7 +13,7 @@ void LockButton::onLongPress() {
 	}
 }
 
-void LockButton::onShortPress() {
+void OutDoorButton::onShortPress() {
 	if (!lock->isLock()) {
 		lock->open();
 	}

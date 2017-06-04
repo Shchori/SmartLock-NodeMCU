@@ -8,8 +8,9 @@ private:
 	bool _isLock;
 	const PinConection connPin;
 	Led lockLed;
+	Led unLockLed;
 public:
-	Lock(PinConection conn, PinConection connLed, bool _isLock = true);
+	Lock(PinConection conn, PinConection lockLed, PinConection unLockLed, bool _isLock = true);
 	const bool isLock();;
 	const void open();
 	void lock();

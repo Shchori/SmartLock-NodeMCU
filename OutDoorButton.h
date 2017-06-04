@@ -4,7 +4,7 @@
 #include "Lock.h"
 
 
-class LockButton :
+class OutDoorButton :
 	public ButtonAction
 {
 private:
@@ -13,8 +13,8 @@ private:
 	
 public:
 
-	LockButton(Lock * lock, FingerPrintProxy *fingerprint) :lock(lock), fingerprint(fingerprint) {};
-	~LockButton() {};
+	OutDoorButton(Lock * lock, FingerPrintProxy *fingerprint) :lock(lock), fingerprint(fingerprint) {};
+	~OutDoorButton() {};
 	void onLongPress();
 	void onShortPress();
 };

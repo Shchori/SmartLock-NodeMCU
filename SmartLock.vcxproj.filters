@@ -27,13 +27,16 @@
     <ClCompile Include="Lock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LockButton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PushButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="updateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WifiConnectManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutDoorButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,9 +56,6 @@
     <ClInclude Include="Lock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LockButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="myLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -65,10 +65,16 @@
     <ClInclude Include="updateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WifiConfigurationButton.h">
+    <ClInclude Include="__vm\.SmartLock.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="__vm\.SmartLock.vsarduino.h">
+    <ClInclude Include="WifiConnectManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OutDoorButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InDoorButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

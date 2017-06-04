@@ -234,6 +234,7 @@ int FingerPrintProxy::getFingerprintID() {
 	while (p!=FINGERPRINT_OK && (FINGERPRINT_TIMEOUT+startTime) > millis() )
 	{
 		p = fingerPrint.getImage();
+		delay(100);
 	}
 	if (p != FINGERPRINT_OK)  return -1;
 
