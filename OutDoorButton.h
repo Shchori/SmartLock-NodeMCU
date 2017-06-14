@@ -2,7 +2,7 @@
 #include "buttonAction.h"
 #include "FingerPrintProxy.h"
 #include "Lock.h"
-
+#include "updateManager.h"
 
 class OutDoorButton :
 	public ButtonAction

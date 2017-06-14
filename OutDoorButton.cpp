@@ -6,10 +6,12 @@ void OutDoorButton::onLongPress() {
 		if (id > -1) {
 			lock->unlock();
 			lock->open();
+			updateManager::updateServerLocalAction("unlock", id);
 		}
 	}
 	else {
 		lock->lock();
+		updateManager::updateServerLocalAction("lock");
 	}
 }
 

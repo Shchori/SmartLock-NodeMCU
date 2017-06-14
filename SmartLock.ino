@@ -28,20 +28,32 @@ void setup() {
 	Logger::info("info: ****************\r\n");
 	Logger::info("info: SmartLock Start\r\n");
 	Logger::info("info: ********************\r\n");
-	Lock* lock = new Lock(PIN_D8, PIN_D0,PIN_D7);
+	Lock* lock = new Lock(PIN_D8, PIN_D0, PIN_D7);
 	FingerPrintProxy::init(PIN_D1, PIN_D2);
 	WifiConnectManager::init(PIN_D3);
-	updateManager::init(fingerprint, lock, "smartlockproject.herokuapp.com", "/api/lockRequest", 443, serverSH1ingerprint);
+	updateManager::init(fingerprint, lock, "smartlockproject.herokuapp.com", "/api/lockRequest", "/api/localButtonAction", 443, serverSH1ingerprint);
 	fingerprint = FingerPrintProxy::getInstance();
 	ButtonAction* outButton = new OutDoorButton(lock, fingerprint);
 	ButtonAction* inButton = new InDoorButton(lock);
 	outDoorButton = new PushButton(PIN_D6, outButton, 2.5 * 1000, 20);
 	inDoorButton = new PushButton(PIN_D5, inButton, 10 * 1000, 20);
 }
-
 // the loop function runs over and over again until power down or reset
 void loop() {
-	updateManager::checkifActionNeeded();
 	outDoorButton->checkIfActionNeeded();
 	inDoorButton->checkIfActionNeeded();
+	updateManager::checkifActionNeeded();
 }
+
+void removeAllSavedFingerPrints() {
+	for (int i = 0; i < 170; ++i) {
+		fingerprint->deleteFingerprint(i);
+	}
+}
+
+void add3fingerPrints() {
+	for (int i = 0; i < 3; ++i) {
+		fingerprint->EnrollFingerprint(i);
+	}
+}
+

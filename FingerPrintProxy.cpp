@@ -249,7 +249,7 @@ int FingerPrintProxy::getFingerprintID() {
 	// found a match!
 	Logger::debug("Found ID # :");Serial.print( fingerPrint.fingerID);
 	Logger::debug(" with confidence of : ");Serial.print(fingerPrint.confidence);
-	if (fingerPrint.confidence > 80) {
+	if (fingerPrint.confidence > 70) {
 		return fingerPrint.fingerID;
 	}
 	return - 1;

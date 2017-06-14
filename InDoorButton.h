@@ -17,8 +17,10 @@ public:
 	void onShortPress() {
 		if (lock->isLock()) {
 				lock->unlock();
+				updateManager::updateServerLocalAction("unlock");
 		}else {
 			lock->lock();
+			updateManager::updateServerLocalAction("lock");
 		}
 	};
 };

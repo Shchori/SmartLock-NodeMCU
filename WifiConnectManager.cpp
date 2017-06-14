@@ -30,7 +30,7 @@ bool WifiConnectManager::checkConnection() {
 		{
 			Logger::info("Connected\r\n");
 			connected = true;
-			disconnectedLed->flashTimes(2, 100);
+			disconnectedLed->flashTimes(2, 300);
 			disconnectedLed->turnOFF();
 		}
 		return true;
