@@ -45,15 +45,3 @@ void loop() {
 	updateManager::checkifActionNeeded();
 }
 
-void removeAllSavedFingerPrints() {
-	for (int i = 0; i < 170; ++i) {
-		fingerprint->deleteFingerprint(i);
-	}
-}
-
-void add3fingerPrints() {
-	for (int i = 0; i < 3; ++i) {
-		fingerprint->EnrollFingerprint(i);
-	}
-}
-
